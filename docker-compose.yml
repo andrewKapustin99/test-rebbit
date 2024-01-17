@@ -1,0 +1,46 @@
+version: '3'
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+      - rabbitmq
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    depends_on:
+      - db
+      - rabbitmq
+    deploy:
+      replicas: 3
+  db:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres             # имя пользователя (опционально)
+      POSTGRES_PASSWORD: Napoleon1703        # пароль пользователя
+      POSTGRES_DB: test           # имя базы данных (опционально)
+    ports:
+      - "5432:5432"   
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'        # Ограничение использования CPU (2 ядра)
+          memory: 2048M                   # проброс порта, если нужно подключаться к БД с хост-машины
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # том для хранения данных
+
+volumes:
+  postgres_data:  # объявление тома для PostgreSQL

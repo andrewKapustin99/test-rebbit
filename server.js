@@ -15,7 +15,7 @@ async function connectRabbitMQ() {
     const channel = await connection.createChannel();
     const queue = "user_registration"; // Название очереди
 
-    await channel.assertQueue(queue, { durable: false });
+    await channel.assertQueue(queue, { durable: true });
 
     async function sendToQueue(message) {
       await channel.sendToQueue(queue, Buffer.from(JSON.stringify(message)));

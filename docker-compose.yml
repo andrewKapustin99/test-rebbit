@@ -34,11 +34,6 @@ services:
       POSTGRES_DB: test           # имя базы данных (опционально)
     ports:
       - "5432:5432"   
-    deploy:
-      resources:
-        limits:
-          cpus: '2.0'        # Ограничение использования CPU (2 ядра)
-          memory: 2048M                   # проброс порта, если нужно подключаться к БД с хост-машины
     volumes:
       - postgres_data:/var/lib/postgresql/data  # том для хранения данных
 
